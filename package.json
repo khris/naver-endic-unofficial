@@ -2,13 +2,13 @@
   "title": "Naver English Dictionary (Unofficial)",
   "id": "jid0-4NyOrh90OO8ezy2B2j9O4zgrQdk@jetpack",
   "name": "naver-endic",
-  "version": "0.6.1",
+  "version": "0.6.99",
   "description": "찾고싶은 영어 단어를 선택하면 네이버 사전 팝업을 띄워줍니다.",
   "main": "index.js",
   "author": "KHRISMIZER",
   "engines": {
-    "firefox": ">=38.0a1",
-    "fennec": ">=38.0a1"
+    "firefox": ">= 52.0a1",
+    "fennec": ">= 52.0a1"
   },
   "license": "MPL-2.0",
   "preferences": [
@@ -50,5 +50,10 @@
       "type": "bool",
       "value": false
     }
-  ]
+  ],
+  "permissions": {
+    "private-browsing": true,
+    "multiprocess": true
+  },
+  "hasEmbeddedWebExtension": true
 }

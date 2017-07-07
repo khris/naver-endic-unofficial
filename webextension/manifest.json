@@ -1,0 +1,50 @@
+{
+  "manifest_version": 2,
+  "name": "naver-endic",
+  "version": "0.6.99",
+  "description": "찾고싶은 영어 단어를 선택하면 네이버 사전 팝업을 띄워줍니다.",
+  "icons": {
+    "48": "icons/icon.png",
+    "96": "icons/icon@2x.png"
+  },
+  "background": {
+    "scripts": ["bg.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "all_frames": true,
+      "js": ["handler.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    "dict.html"
+  ],
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": "icons/ic_mode_std.png",
+    "default_title": "Naver English Dictionary (Unofficial)",
+    "default_area": "navbar"
+  },
+  "options_ui": {
+    "page": "dummy.html",
+    "browser_style": true
+  },
+  "commands": {
+    "toggle-mode": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+V"
+      },
+      "description": "모드를 전환합니다"
+    }
+  },
+  "permissions": [
+    "storage"
+  ],
+  "applications": {
+    "gecko": {
+      "id": "jid0-4NyOrh90OO8ezy2B2j9O4zgrQdk@jetpack",
+      "strict_min_version": "52.0a1"
+    }
+  }
+}
