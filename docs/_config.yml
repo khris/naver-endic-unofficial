@@ -1,0 +1,19 @@
+title: Naver English Dictionary (Unofficial)
+description: >
+  찾고싶은 영어 단어를 선택하면 네이버 사전 팝업을 띄워줍니다.
+lang: ko-KR
+addon_page_url: https://addons.mozilla.org/firefox/addon/naver-endic/
+defaults:
+  - scope:
+      path: ''
+    values:
+      layout: 'default'
+
+# theme option
+show_downloads: false
+
+markdown: kramdown
+theme: jekyll-theme-cayman
+gems:
+  - jekyll-github-metadata
+  - jemoji
