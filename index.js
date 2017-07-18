@@ -51,6 +51,12 @@ function toggleMode() {
   }
 }
 
+exports.main = function (options, callbacks) {
+
+if (options.loadReason === 'install' || options.loadReason === 'upgrade') {
+  require("sdk/tabs").open('https://khris.github.io/naver-endic-unofficial/');
+}
+
 webext.startup().then(({ browser }) => {
   browser.runtime.onConnect.addListener(port => {
     if (port.name === 'sync-legacy-addon-data') {
@@ -69,3 +75,5 @@ webext.startup().then(({ browser }) => {
     }
   });
 });
+
+}
