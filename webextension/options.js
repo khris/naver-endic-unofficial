@@ -12,7 +12,6 @@ function restoreOptions() {
   const getting = browser.storage.local.get('prefs');
   getting.then(results => {
     const { prefs } = results;
-    console.log(prefs);
     restoreSelectElement(prefs, 'wordSelectMode');
     restoreCheckElement(prefs, 'useCtrl');
     restoreCheckElement(prefs, 'useAlt');
