@@ -37,6 +37,14 @@ browser.commands.onCommand.addListener((cmd) => {
   }
 });
 
+browser.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install' || details.reason === 'update') {
+    browser.tabs.create({
+      url: 'https://khris.github.io/naver-endic-unofficial/'
+    })
+  }
+});
+
 /* 일단 안씀
 browser.webRequest.onHeadersReceived.addListener((e) => {
     for (var i = 0; i < e.responseHeaders.length; i++) {
