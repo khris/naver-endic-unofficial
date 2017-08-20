@@ -1,34 +1,48 @@
-let q = document.querySelector;
-
-function restoreSelectElement(prefs, k) {
-  q(`select[name="${k}"]>option[value="${prefs['k']}"]`).selected = true;
+function applyToFormElements(func) {
+  for (const elem of document.querySelectorAll('input, select')) {
+    func(elem);
+  }
 }
 
-function restoreCheckElement(prefs, k) {
-  q(`input[name="${k}"`).checked = prefs[k];
+function getFormElementValue(elem) {
+  if (elem.type === 'radio' || elem.type === 'checkbox') {
+    return elem.checked;
+  } else {
+    return elem.value;
+  }
 }
 
+function setFormElementValue(elem, value) {
+  if (elem.type === 'radio' || elem.type === 'checkbox') {
+    elem.checked = value;
+  } else {
+    elem.value = value;
+  }
+}
+
+/* global defaultPrefs */
 function restoreOptions() {
-  const getting = browser.storage.local.get('prefs');
-  getting.then(results => {
+  browser.storage.local.get({
+    prefs: defaultPrefs
+  }).then((results) => {
     const { prefs } = results;
-    restoreSelectElement(prefs, 'wordSelectMode');
-    restoreCheckElement(prefs, 'useCtrl');
-    restoreCheckElement(prefs, 'useAlt');
-    restoreCheckElement(prefs, 'useMeta');
+    applyToFormElements((elem) => {
+      setFormElementValue(elem, prefs[elem.name]);
+    });
   });
 }
 
-function saveOption(event) {
-  /*
-  if (event.target.type === 'radio' || event.target.type === 'checkbox') {
-    alert(event.target.name);
-    alert(event.target.checked);
-  } else {
-    alert(event.target.value);
-  }
-  */
+function saveOptions() {
+  let newPrefs = {}
+  applyToFormElements((elem) => {
+    newPrefs[elem.name] = getFormElementValue(elem);
+  });
+  browser.storage.local.set({
+    prefs: newPrefs
+  });
 }
 
-document.addEventListener("DOMContentLoaded", restoreOptions);
-q("input, option").addEventListener("change", saveOption)
+document.addEventListener('DOMContentLoaded', restoreOptions);
+applyToFormElements((elem) => {
+  elem.addEventListener('change', saveOptions);
+});

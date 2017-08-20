@@ -8,13 +8,19 @@
     "96": "icons/icon@2x.png"
   },
   "background": {
-    "scripts": ["bg.js"]
+    "scripts": [
+      "config.js",
+      "bg.js"
+    ]
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "all_frames": true,
-      "js": ["handler.js"]
+      "js": [
+        "config.js",
+        "handler.js"
+      ]
     }
   ],
   "web_accessible_resources": [
@@ -27,7 +33,7 @@
     "default_area": "navbar"
   },
   "options_ui": {
-    "page": "dummy.html",
+    "page": "options.html",
     "browser_style": true
   },
   "commands": {

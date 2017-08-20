@@ -3,30 +3,34 @@ const modeIcons = [
   'icons/ic_mode_std.png'
 ];
 const modeName = [
-  'Classic mode (Drag)',
-  'Standard (Modifier Keys + Click)'
+  '옛날 방법 (드래그)',
+  '표준 (기능키 + 클릭)'
 ];
 
-browser.storage.onChanged.addListener((changes, area) => {
-  const wordSelectMode = changes.prefs.newValue.wordSelectMode;
+function initBrowserAction(wordSelectMode) {
   browser.browserAction.setIcon({
     path: modeIcons[wordSelectMode]
   });
   browser.browserAction.setTitle({
     title: `Naver English Dictionary (Unofficial)\n${modeName[wordSelectMode]}`
   });
+}
+
+/* global defaultPrefs */
+browser.storage.local.get({
+  prefs: defaultPrefs
+}).then((results) => {
+  const { prefs } = results;
+  initBrowserAction(prefs.wordSelectMode);
+});
+
+browser.storage.onChanged.addListener((changes, area) => {
+  const wordSelectMode = changes.prefs.newValue.wordSelectMode;
+  initBrowserAction(wordSelectMode);
 });
 
 browser.browserAction.onClicked.addListener((tab) => {
   browser.runtime.openOptionsPage();
-});
-
-let port = browser.runtime.connect({ name: 'sync-legacy-addon-data' });
-
-port.onMessage.addListener((msg) => {
-  if (msg) {
-    browser.storage.local.set(msg);
-  }
 });
 
 browser.commands.onCommand.addListener((cmd) => {

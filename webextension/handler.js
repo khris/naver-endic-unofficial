@@ -1,12 +1,7 @@
-let defaultPrefs = {
-  wordSelectMode: 1,
-  useCtrl: false,
-  useAlt: true,
-  useMeta: false
-};
 let prefs = null;
 let ignoreMouseEvent = false;
 
+/* global defaultPrefs */
 browser.storage.local.get('prefs', (rawItem) => {
   // see https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/StorageArea/get
   const item = Array.isArray(rawItem) ? rawItem[0] : rawItem;
@@ -42,7 +37,7 @@ document.addEventListener('mouseup', (e) => {
   showPopupFromSelection(sel, text);
 });
 
-document.addEventListener('click', e => {
+document.addEventListener('click', (e) => {
   if (prefs === null || prefs.wordSelectMode != 1) {
     return;
   }
