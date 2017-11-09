@@ -35,8 +35,14 @@ browser.browserAction.onClicked.addListener((tab) => {
 
 browser.commands.onCommand.addListener((cmd) => {
   if (cmd === 'toggle-mode') {
-    browser.runtime.sendMessage({
-      cmd: cmd
+    browser.storage.local.get({
+      prefs: defaultPrefs
+    }).then((results) => {
+      const { prefs } = results;
+      prefs['wordSelectMode'] = prefs['wordSelectMode'] == 0 ? 1 : 0;
+      browser.storage.local.set({
+        prefs: prefs
+      });
     });
   }
 });
