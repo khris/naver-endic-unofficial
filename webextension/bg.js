@@ -48,18 +48,3 @@ browser.runtime.onInstalled.addListener((details) => {
     })
   }
 });
-
-/* 일단 안씀
-browser.webRequest.onHeadersReceived.addListener((e) => {
-    for (var i = 0; i < e.responseHeaders.length; i++) {
-      if (e.responseHeaders[i].name === 'X-Frame-Options') {
-        e.responseHeaders.splice(i, 1);
-        break;
-      }
-    }
-    return { responseHeaders: e.responseHeaders };
-  },
-  { urls: ['http://endic.naver.com/*'] },
-  ["blocking", "responseHeaders"]
-);
-*/
