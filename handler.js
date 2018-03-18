@@ -176,8 +176,8 @@ function isTooltip(elem) {
 }
 
 function getWordMeaning(word) {
-  let dictUrl = `http://m.endic.naver.com/search.nhn?sLn=kr&query=${encodeURIComponent(word)}&searchOption=entryIdiom&forceRedirect=`;
-  let dictPageUrl = `http://endic.naver.com/search.nhn?sLn=kr&query=${encodeURIComponent(word)}`;
+  let dictUrl = `http://m.endic.naver.com/search.nhn?sLn=en&query=${encodeURIComponent(word)}&searchOption=entryIdiom&forceRedirect=`;
+  let dictPageUrl = `http://endic.naver.com/search.nhn?sLn=en&query=${encodeURIComponent(word)}`;
   return fetch(dictUrl).then((response) => response.text())
       .then((text) => (new DOMParser()).parseFromString(text, 'text/html'))
       .then((doc) => {
