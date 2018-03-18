@@ -188,7 +188,12 @@ function getWordMeaning(word) {
         let result = '';
         let i = 0;
         for (let card of cards) {
-          let title = card.querySelector('div.h_word>strong');
+          let title = card.querySelector('div.h_word');
+          for (let child of title.children) {
+            if (child.classList.contains('link_wrap')) {
+              child.remove();
+            }
+          }
           let descs = card.querySelectorAll('ul.desc_lst p.desc');
           result += `<dl style="margin: 6px"><dt>${title.innerHTML}`
           let pronounces = card.querySelectorAll('div.pronun_area');
