@@ -190,7 +190,17 @@ function getWordMeaning(word) {
         for (let card of cards) {
           let title = card.querySelector('div.h_word>strong');
           let descs = card.querySelectorAll('ul.desc_lst p.desc');
-          result += `<dl style="margin: 6px"><dt>${title.innerHTML}</dt><dd style="margin-left: 1em">`;
+          result += `<dl style="margin: 6px"><dt>${title.innerHTML}</dt>`
+          let pronounces = card.querySelectorAll('div.pronun_area');
+          for (let pronounce of pronounces) {
+            let country = pronounce.querySelector('em.speech');
+            let pronounceText = pronounce.querySelector('span.pronun');
+            if (pronounceText === null) {
+              continue;
+            }
+            result += `<dd style="margin-left: 0">${pronounceText.innerHTML}</dd>`;
+          }
+          result += '<dd style="margin-left: 1em">';
           if (descs.length > 1) {
             result += '<ol style="margin: 0; padding-left: 1em; list-style: decimal">';
             for (let desc of descs) {
