@@ -84,9 +84,9 @@ function enableTextSelection() {
     e.stopImmediatePropagation();
     return true;
   }, {
-    capture: true,
-    once: true
-  });
+      capture: true,
+      once: true
+    });
   return oldSettings;
 }
 
@@ -136,9 +136,8 @@ function showTooltipFromSelection(sel, text) {
 function showTooltip(text, pos) {
   let ret = getWordMeaning(text);
   ret.then((result) => {
-    let tooltip = document.createElement('div');
+    tooltip = result;
     tooltip.id = TOOLTIP_ID;
-    tooltip.innerHTML = result;
     tooltip.style.setProperty('position', `absolute`, 'important');
     tooltip.style.setProperty('top', `${pos.top}px`, 'important');
     tooltip.style.setProperty('left', `${pos.left}px`, 'important');
@@ -154,7 +153,7 @@ function showTooltip(text, pos) {
     tooltip.style.setProperty('border', `1px solid black`, 'important');
     tooltip.style.setProperty('margin', `0`, 'important');
     tooltip.style.setProperty('padding', `0`, 'important');
-    document.body.appendChild(tooltip);  
+    document.body.appendChild(tooltip);
   }).catch(() => {
     // do nothing
   });
@@ -179,49 +178,85 @@ function getWordMeaning(word) {
   let dictUrl = `http://m.endic.naver.com/search.nhn?sLn=en&query=${encodeURIComponent(word)}&searchOption=entryIdiom&forceRedirect=`;
   let dictPageUrl = `http://endic.naver.com/search.nhn?sLn=kr&query=${encodeURIComponent(word)}`;
   return fetch(dictUrl).then((response) => response.text())
-      .then((text) => (new DOMParser()).parseFromString(text, 'text/html'))
-      .then((doc) => {
-        let cards = doc.body.querySelectorAll('div.section_card div.entry_search_word');
-        if (cards.length < 1) {
-          throw Error('No Result');
+    .then((text) => (new DOMParser()).parseFromString(text, 'text/html'))
+    .then((doc) => {
+      let tooltip = document.createElement('div');
+      let cards = doc.body.querySelectorAll('div.section_card div.entry_search_word');
+      if (cards.length < 1) {
+        throw Error('No Result');
+      }
+      let result = '';
+      let i = 0;
+      for (let card of cards) {
+        let title = card.querySelector('div.h_word');
+        for (let child of title.children) {
+          if (child.classList.contains('link_wrap')) {
+            child.remove();
+          }
         }
-        let result = '';
+        let descs = card.querySelectorAll('ul.desc_lst p.desc');
+        let dl = document.createElement("dl");
+        dl.style = "margin: 6px";
+        dl.innerHTML = title.innerHTML;
+        tooltip.appendChild(dl);
+        let pronounces = card.querySelectorAll('div.pronun_area');
         let i = 0;
-        for (let card of cards) {
-          let title = card.querySelector('div.h_word');
-          for (let child of title.children) {
-            if (child.classList.contains('link_wrap')) {
-              child.remove();
+        for (let pronounce of pronounces) {
+          let country = pronounce.querySelector('em.speech');
+          let pronounceText = pronounce.querySelector('span.pronun');
+          let pronounceButton = pronounce.querySelector('button.btn_listen');
+          if (pronounceText === null) {
+            continue;
+          } else {
+            dl.appendChild(country);
+            dl.appendChild(pronounceText);
+
+            if (pronounceButton != null) {
+              let splittedPronounceButton = pronounceButton.outerHTML.split("'");
+              if (splittedPronounceButton.length > 0) {
+                let button = document.createElement("button");
+                button.onclick = function () {
+                  let audio = new Audio(splittedPronounceButton[1]);
+                  audio.play();
+                }
+                button.innerHTML = "발음듣기";
+                dl.appendChild(button);
+              }
             }
-          }
-          let descs = card.querySelectorAll('ul.desc_lst p.desc');
-          result += `<dl style="margin: 6px"><dt>${title.innerHTML}`
-          let pronounces = card.querySelectorAll('div.pronun_area');
-          for (let pronounce of pronounces) {
-            let country = pronounce.querySelector('em.speech');
-            let pronounceText = pronounce.querySelector('span.pronun');
-            if (pronounceText === null) {
-              continue;
-            }
-            result += ` ${country.innerHTML} ${pronounceText.innerHTML}`;
-          }
-          result += '</dt><dd style="margin-left: 1em">';
-          if (descs.length > 1) {
-            result += '<ol style="margin: 0; padding-left: 1em; list-style: decimal">';
-            for (let desc of descs) {
-              result += `<li>${desc.textContent}</li>`;
-            }
-            result += '</ol>'
-          } else if (descs.length == 1) {
-            result += descs[0].textContent;
-          }
-          result += '</dd></dl>';
-          i++;
-          if (i >=  5) {
-            break;
           }
         }
-        result += `<p style="margin: 6px; text-align: right"><a href="${dictPageUrl}" target="_blank" rel="noopener noreferrer">네이버 사전 열기</a></p>`
-        return result;
-      });
+
+        let dd = document.createElement("dd");
+        dd.style = "margin-left: 1em";
+        if (descs.length > 1) {
+          let ol = document.createElement("ol");
+          ol.style = "margin: 0; padding-left: 1em; list-style: decimal";
+          for (let desc of descs) {
+            let li = document.createElement("li");
+            li.innerText = desc.textContent;
+            ol.appendChild(li);
+          }
+        } else if (descs.length == 1) {
+          dd.innerText = descs[0].textContent;
+        }
+        dl.appendChild(dd);
+        i++;
+        if (i >= 5) {
+          break;
+        }
+      }
+      let p = document.createElement("p")
+      p.style = "margin: 6px; text-align: right";
+
+      let a = document.createElement("a")
+      a.href = "${dictPageUrl}";
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.innerText = "네이버 사전 열기";
+
+      p.appendChild(a);
+      tooltip.appendChild(p);
+
+      return tooltip;
+    });
 }
