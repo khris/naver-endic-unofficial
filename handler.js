@@ -154,6 +154,7 @@ function showTooltip(text, pos) {
     tooltip.style.setProperty('border', `1px solid black`, 'important');
     tooltip.style.setProperty('margin', `0`, 'important');
     tooltip.style.setProperty('padding', `0`, 'important');
+    tooltip.style.setProperty('max-width', `30em`, 'important');
     document.body.appendChild(tooltip);  
   }).catch(() => {
     // do nothing
