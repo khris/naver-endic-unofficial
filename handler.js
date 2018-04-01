@@ -30,7 +30,7 @@ document.addEventListener('mouseup', (e) => {
   }
   let sel = document.getSelection();
   let text = sel.toString().trim();
-  if (text.length < 1) {
+  if (text.length < 1 || text.length > 40) {
     return;
   }
   let focusNode = sel.focusNode;
