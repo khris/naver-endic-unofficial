@@ -1,7 +1,0 @@
-.DS_Store
-.git/
-index.sublime-workspace
-.gitignore
-.jpmignore
-*.xpi
-docs/
