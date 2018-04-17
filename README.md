@@ -5,3 +5,7 @@
 ## Licence
 
 Mozilla Public License 2.0. See `LICENSE.md`.
+
+`icons/speech.png` is from [Google Material Design Icons][0].
+
+[0]: https://github.com/google/material-design-icons/

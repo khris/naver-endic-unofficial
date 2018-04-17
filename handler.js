@@ -10,7 +10,7 @@ browser.storage.local.get('prefs', (rawItem) => {
   prefs = item.prefs ? item.prefs : defaultPrefs;
 });
 
-browser.storage.onChanged.addListener((changes, area) => {
+browser.storage.onChanged.addListener((changes /*, area */) => {
   prefs = changes.prefs.newValue;
 });
 
@@ -134,31 +134,27 @@ function showTooltipFromSelection(sel, text) {
 }
 
 function showTooltip(text, pos) {
-  let ret = getWordMeaning(text);
-  ret.then((result) => {
-    let tooltip = document.createElement('div');
-    tooltip.id = TOOLTIP_ID;
-    tooltip.innerHTML = result;
-    tooltip.style.setProperty('position', `absolute`, 'important');
-    tooltip.style.setProperty('top', `${pos.top}px`, 'important');
-    tooltip.style.setProperty('left', `${pos.left}px`, 'important');
-    tooltip.style.setProperty('display', `block`, 'important');
-    tooltip.style.setProperty('width', `fit-content`, 'important');
-    tooltip.style.setProperty('width', `-moz-fit-content`, 'important');
-    tooltip.style.setProperty('width', `-webkit-fit-content`, 'important');
-    tooltip.style.setProperty('height', `auto`, 'important');
-    tooltip.style.setProperty('z-index', `${Number.MAX_SAFE_INTEGER}`, 'important');
-    tooltip.style.setProperty('background-color', `white`, 'important');
-    tooltip.style.setProperty('color', `black`, 'important');
-    tooltip.style.setProperty('font', `normal 12px sans-serif`, 'important');
-    tooltip.style.setProperty('border', `1px solid black`, 'important');
-    tooltip.style.setProperty('margin', `0`, 'important');
-    tooltip.style.setProperty('padding', `0`, 'important');
-    tooltip.style.setProperty('max-width', `30em`, 'important');
-    document.body.appendChild(tooltip);  
-  }).catch(() => {
-    // do nothing
-  });
+  let tooltip = document.createElement('div');
+  tooltip.id = TOOLTIP_ID;
+  let dictUrl = browser.extension.getURL('dict.html') + `?text=${text}`;
+  tooltip.innerHTML = `<iframe style="border: 0" src="${dictUrl}"></iframe>`;
+  tooltip.style.setProperty('position', `absolute`, 'important');
+  tooltip.style.setProperty('top', `${pos.top}px`, 'important');
+  tooltip.style.setProperty('left', `${pos.left}px`, 'important');
+  tooltip.style.setProperty('display', `block`, 'important');
+  tooltip.style.setProperty('width', `fit-content`, 'important');
+  tooltip.style.setProperty('width', `-moz-fit-content`, 'important');
+  tooltip.style.setProperty('width', `-webkit-fit-content`, 'important');
+  tooltip.style.setProperty('height', `auto`, 'important');
+  tooltip.style.setProperty('z-index', `${Number.MAX_SAFE_INTEGER}`, 'important');
+  tooltip.style.setProperty('background-color', `white`, 'important');
+  tooltip.style.setProperty('color', `black`, 'important');
+  tooltip.style.setProperty('font', `normal 12px sans-serif`, 'important');
+  tooltip.style.setProperty('border', `1px solid black`, 'important');
+  tooltip.style.setProperty('margin', `0`, 'important');
+  tooltip.style.setProperty('padding', `0`, 'important');
+  tooltip.style.setProperty('max-width', `30em`, 'important');
+  document.body.appendChild(tooltip);  
 }
 
 function hideTooltip() {
@@ -174,55 +170,4 @@ function isTooltip(elem) {
     return false;
   }
   return (tooltip == elem || tooltip.contains(elem));
-}
-
-function getWordMeaning(word) {
-  let dictUrl = `http://m.endic.naver.com/search.nhn?sLn=en&query=${encodeURIComponent(word)}&searchOption=entryIdiom&forceRedirect=`;
-  let dictPageUrl = `http://endic.naver.com/search.nhn?sLn=kr&query=${encodeURIComponent(word)}`;
-  return fetch(dictUrl).then((response) => response.text())
-      .then((text) => (new DOMParser()).parseFromString(text, 'text/html'))
-      .then((doc) => {
-        let cards = doc.body.querySelectorAll('div.section_card div.entry_search_word');
-        if (cards.length < 1) {
-          throw Error('No Result');
-        }
-        let result = '';
-        let i = 0;
-        for (let card of cards) {
-          let title = card.querySelector('div.h_word');
-          for (let child of title.children) {
-            if (child.classList.contains('link_wrap')) {
-              child.remove();
-            }
-          }
-          let descs = card.querySelectorAll('ul.desc_lst p.desc');
-          result += `<dl style="margin: 6px"><dt>${title.innerHTML}`
-          let pronounces = card.querySelectorAll('div.pronun_area');
-          for (let pronounce of pronounces) {
-            let country = pronounce.querySelector('em.speech');
-            let pronounceText = pronounce.querySelector('span.pronun');
-            if (pronounceText === null) {
-              continue;
-            }
-            result += ` ${country.innerHTML} ${pronounceText.innerHTML}`;
-          }
-          result += '</dt><dd style="margin-left: 1em">';
-          if (descs.length > 1) {
-            result += '<ol style="margin: 0; padding-left: 1em; list-style: decimal">';
-            for (let desc of descs) {
-              result += `<li>${desc.textContent}</li>`;
-            }
-            result += '</ol>'
-          } else if (descs.length == 1) {
-            result += descs[0].textContent;
-          }
-          result += '</dd></dl>';
-          i++;
-          if (i >=  5) {
-            break;
-          }
-        }
-        result += `<p style="margin: 6px; text-align: right"><a href="${dictPageUrl}" target="_blank" rel="noopener noreferrer">네이버 사전 열기</a></p>`
-        return result;
-      });
 }
