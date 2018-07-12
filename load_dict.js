@@ -23,7 +23,12 @@ getWordMeaning(q['text']).then((result) => {
 function getWordMeaning(word) {
   let dictUrl = `http://m.endic.naver.com/search.nhn?sLn=en&query=${encodeURIComponent(word)}&searchOption=entryIdiom&forceRedirect=`;
   let dictPageUrl = `http://endic.naver.com/search.nhn?sLn=kr&query=${encodeURIComponent(word)}`;
-  return fetch(dictUrl).then((response) => response.text())
+  let init = {
+    headers: {
+      'User-Agent': `${window.navigator.userAgent} NotAndroid`
+    }
+  };
+  return fetch(dictUrl, init).then((response) => response.text())
       .then((text) => (new DOMParser()).parseFromString(text, 'text/html'))
       .then((doc) => {
         let cards = doc.body.querySelectorAll('div.section_card div.entry_search_word');

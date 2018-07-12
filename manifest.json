@@ -47,7 +47,8 @@
   "permissions": [
     "storage",
     "webRequest",
-    "*://m.endic.naver.com/*"
+    "*://m.endic.naver.com/*",
+    "*://endic.naver.com/*"
   ],
   "applications": {
     "gecko": {
