@@ -148,11 +148,12 @@ function showTooltip(text, pos) {
   tooltip.style.setProperty('height', `auto`, 'important');
   tooltip.style.setProperty('z-index', `${Number.MAX_SAFE_INTEGER}`, 'important');
   tooltip.style.setProperty('background-color', `white`, 'important');
-  tooltip.style.setProperty('color', `black`, 'important');
+  tooltip.style.setProperty('color', `darkslategray`, 'important');
   tooltip.style.setProperty('font', `normal 12px sans-serif`, 'important');
-  tooltip.style.setProperty('border', `1px solid black`, 'important');
+  tooltip.style.setProperty('border', `1px solid darkslategray`, 'important');
+  tooltip.style.setProperty('border-radius', `10px`, 'important');
   tooltip.style.setProperty('margin', `0`, 'important');
-  tooltip.style.setProperty('padding', `0`, 'important');
+  tooltip.style.setProperty('padding', `5px`, 'important');
   tooltip.style.setProperty('max-width', `30em`, 'important');
   document.body.appendChild(tooltip);  
 }
