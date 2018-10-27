@@ -41,11 +41,18 @@ function getWordMeaning(word) {
         for (let card of cards) {
           let title = card.querySelector('div.h_word');
           for (let child of title.children) {
+            let helpBtns = child.querySelectorAll('.ask');
+            for (let helpBtn of helpBtns) {
+              helpBtn.remove()
+            }
             if (child.classList.contains('link_wrap')) {
               child.remove();
             }
           }
-          let descs = card.querySelectorAll('ul.desc_lst p.desc');
+          let descs = card.querySelectorAll('ul.desc_lst li');
+          if (descs.length < 1) {
+            descs = card.querySelectorAll('p.desc_lst')
+          }
           result += `<dl><dt>${title.innerHTML}`
           let pronounces = card.querySelectorAll('div.pronun_area');
           for (let pronounce of pronounces) {
@@ -55,7 +62,7 @@ function getWordMeaning(word) {
             if (pronounceText === null) {
               continue;
             }
-            result += ` ${country.innerHTML} ${pronounceText.innerHTML}`;
+            result += ` <span class="tag">${country.innerHTML.trim()}</span> ${pronounceText.innerHTML}`;
             if (pronounceButton !== null) {
               let chunks = pronounceButton.getAttribute('onclick').split("'");
               if (chunks.length < 2) {
