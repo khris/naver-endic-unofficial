@@ -21,74 +21,64 @@ getWordMeaning(q['text']).then((result) => {
 });
 
 function getWordMeaning(word) {
-  let dictUrl = `https://endic.naver.com/search.nhn?sLn=en&query=${encodeURIComponent(word)}&searchOption=entryIdiom&forceRedirect=`;
-  let dictPageUrl = `https://endic.naver.com/search.nhn?sLn=kr&query=${encodeURIComponent(word)}`;
+  const encodedWord = encodeURIComponent(word);
+  let dictUrl = `https://en.dict.naver.com/api3/enko/search?query=${encodedWord}&m=pc&range=all&shouldSearchVlive=true&lang=ko`;
+  let dictPageUrl = `https://en.dict.naver.com/#/search?query=${encodedWord}&range=all`;
   let init = {
     headers: {
       'User-Agent': `${window.navigator.userAgent} NotAndroid`
     }
   };
-  return fetch(dictUrl, init).then((response) => response.text())
-      .then((text) => (new DOMParser()).parseFromString(text, 'text/html'))
-      .then((doc) => {
-        let cards = doc.body.querySelectorAll('div.section_card div.entry_search_word');
-        if (cards.length < 1) {
+  return fetch(dictUrl, init).then((response) => response.json())
+      .then((data) => data.searchResultMap.searchResultListMap.WORD.items)
+      .then((words) => {
+        if (words.length < 1) {
           throw Error('No Result');
         }
         let pronounceUrls = [];
         let result = '';
-        let i = 0;
-        for (let card of cards) {
-          let title = card.querySelector('div.h_word');
-          for (let child of title.children) {
-            let helpBtns = child.querySelectorAll('.ask');
-            for (let helpBtn of helpBtns) {
-              helpBtn.remove()
-            }
-            if (child.classList.contains('link_wrap')) {
-              child.remove();
-            }
-          }
-          let descs = card.querySelectorAll('ul.desc_lst li');
-          if (descs.length < 1) {
-            descs = card.querySelectorAll('p.desc_lst')
-          }
-          result += `<dl><dt>${title.innerHTML}`
-          let pronounces = card.querySelectorAll('div.pronun_area');
+        for (let word of words.slice(0, 4)) {
+          let title = word.expEntry;
+          result += `<dl><dt>${title}`
+
+          let pronounces = word.searchPhoneticSymbolList.filter(pronounce => pronounce.symbolType !== 'accentia');
           for (let pronounce of pronounces) {
-            let country = pronounce.querySelector('em.speech');
-            let pronounceText = pronounce.querySelector('span.pronun');
-            let pronounceButton = pronounce.querySelector('button.btn_listen');
-            if (pronounceText === null) {
+            if (pronounce.symbolFile === null || pronounce.symbolFile === '') {
               continue;
             }
-            result += ` <span class="tag">${country.innerHTML.trim()}</span> ${pronounceText.innerHTML}`;
-            if (pronounceButton !== null) {
-              let chunks = pronounceButton.getAttribute('onclick').split("'");
-              if (chunks.length < 2) {
-                continue;
-              }
-              result += `<input id="pron-${pronounceUrls.length}" type="image" alt="발음듣기" src="icons/speech.png">`;
-              pronounceUrls.push(chunks[1]);
-            }
+            let country = pronounce.symbolType;
+            let pronounceText = pronounce.symbolValue ? pronounce.symbolValue : '';
+
+            result += ` <span class="tag">${country}</span> ${pronounceText}`;
+            result += `<input id="pron-${pronounceUrls.length}" type="image" alt="발음듣기" src="icons/speech.png">`;
+            pronounceUrls.push(pronounce.symbolFile);
           }
           result += '</dt><dd>';
-          if (descs.length > 1) {
-            result += '<ol>';
-            for (let desc of descs) {
-              result += `<li>${desc.textContent}</li>`;
+
+          let descs = word.meansCollector.map(item => item.means.map(mean => {
+            return {
+              order: mean.order,
+              part: item.partOfSpeech,
+              value: mean.value,
             }
-            result += '</ol>'
-          } else if (descs.length == 1) {
-            result += descs[0].textContent;
+          })).flat();
+
+          result += '<ul>';
+          for (let desc of descs) {
+            result += '<li>';
+            if (desc.order) {
+              result += `${desc.order}. `;
+            }
+            if (desc.part) {
+              result += `<span class="tag">${desc.part}</span> `;
+            }
+            result += `${desc.value}</li>`;
           }
           result += '</dd></dl>';
-          i++;
-          if (i >=  5) {
-            break;
-          }
         }
+        result += '</ul>';
         result += `<p class="naver-link"><a href="${dictPageUrl}" target="_blank" rel="noopener noreferrer">네이버 사전 열기</a></p>`
+
         return {
           innerHtml: result,
           pronounceUrls: pronounceUrls
