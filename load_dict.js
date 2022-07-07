@@ -27,8 +27,8 @@ function getWordMeaning(word) {
   let init = {
     headers: {
       'User-Agent': `${window.navigator.userAgent} NotAndroid`,
-      'Referer':'https://en.dict.naver.com/'
-    }
+    },
+    'referrer':'https://en.dict.naver.com/'
   };
   return fetch(dictUrl, init).then((response) => response.json())
       .then((data) => data.searchResultMap.searchResultListMap.WORD.items)
