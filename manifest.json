@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Naver English Dictionary (temp)",
-  "version": "0.0.1",
-  "description": "찾고싶은 영어 단어를 선택하면 네이버 사전 팝업을 띄워줍니다. 현재 등록되어 있는 영어단어 사전의 문제를 해결한 임시 확장입니다.",
+  "name": "Naver English Dictionary (Unofficial)",
+  "version": "1.1.5",
+  "description": "찾고싶은 영어 단어를 선택하면 네이버 사전 팝업을 띄워줍니다.",
   "icons": {
     "48": "icons/icon.png",
     "96": "icons/icon@2x.png"
