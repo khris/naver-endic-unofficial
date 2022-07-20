@@ -26,8 +26,9 @@ function getWordMeaning(word) {
   let dictPageUrl = `https://en.dict.naver.com/#/search?query=${encodedWord}&range=all`;
   let init = {
     headers: {
-      'User-Agent': `${window.navigator.userAgent} NotAndroid`
-    }
+      'User-Agent': `${window.navigator.userAgent} NotAndroid`,
+    },
+    'referrer':'https://en.dict.naver.com/'
   };
   return fetch(dictUrl, init).then((response) => response.json())
       .then((data) => data.searchResultMap.searchResultListMap.WORD.items)
