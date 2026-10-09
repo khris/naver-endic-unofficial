@@ -7,6 +7,8 @@ import { wordAtPoint } from '@/utils/word-at-point';
 
 export default defineContentScript({
   matches: MATCHES,
+  allFrames: true,
+  matchAboutBlank: true,
   async main(ctx) {
     let settings = await loadSettings();
     ctx.onInvalidated(watchSettings((s) => (settings = s)));
