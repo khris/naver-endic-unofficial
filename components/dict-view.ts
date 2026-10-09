@@ -138,7 +138,7 @@ export class DictView extends LitElement {
   }
 
   private renderPronunciation(p: DictPronunciation) {
-    const text = [p.label, p.symbol && `[${p.symbol}]`].filter(Boolean).join(' ');
+    const text = html`${p.label}${p.symbol ? html` [${inlineHtml(p.symbol)}]` : nothing}`;
     return p.audio
       ? html`<button type="button" @click=${() => this.play(p.audio!)}>🔈 ${text}</button>`
       : html`<span>${text}</span>`;
