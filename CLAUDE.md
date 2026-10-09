@@ -8,7 +8,8 @@ Firefox, Chrome 등 여러 웹 브라우저를 대상으로 합니다.
 - 모든 확장 기능은 WXT 규약(`entrypoints/`, `defineConfig`, `defineBackground` 등)을 따릅니다.
 - 특정 브라우저에서만 동작하는 코드를 피하고, 크로스 브라우저를 기본으로 합니다. 브라우저별 분기가 필요하면 WXT의 `import.meta.env.BROWSER` / `manifest: ({ browser }) => ...` 를 사용합니다.
 - 확장 API는 `browser.*` (WXT가 제공하는 `wxt/browser`)를 사용하고 `chrome.*`를 직접 쓰지 않습니다.
-- Firefox 전용 설정(`browser_specific_settings.gecko`)은 `wxt.config.ts`에서 관리합니다.
+- Firefox 전용 설정(`browser_specific_settings.gecko`)은 `wxt.config.ts`에서 관리합니다. 여기의 add-on ID는 기존 Firefox 확장을 이어가기 위한 것이므로 변경하지 않습니다.
+- Firefox를 포함한 모든 브라우저에서 Manifest V3를 사용합니다 (`wxt.config.ts`의 `manifestVersion: 3`). WXT 기본값은 Firefox MV2이므로 이 설정을 제거하지 않습니다.
 
 ## UI
 
