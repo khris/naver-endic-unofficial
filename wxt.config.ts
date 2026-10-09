@@ -14,6 +14,13 @@ export default defineConfig({
     action: { default_icon: 'mode/std.png', default_title: '조회 방식 전환' },
     // content script가 iframe으로 띄우는 사전 페이지
     web_accessible_resources: [{ resources: ['dict.html'], matches: MATCHES }],
+    // 조회 방식 전환 단축키. macOS는 Command+Shift+V
+    commands: {
+      'toggle-mode': {
+        suggested_key: { default: 'Ctrl+Shift+V', mac: 'Command+Shift+V' },
+        description: '조회 방식 전환 (보조키 클릭 / 클래식)',
+      },
+    },
     // 네이버 사전 API 호출과 그 요청의 Origin/Referer 헤더 보정, 설정 저장
     permissions: ['declarativeNetRequest', 'storage'],
     host_permissions: ['https://en.dict.naver.com/*'],

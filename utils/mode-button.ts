@@ -11,11 +11,16 @@ async function render(s: Settings) {
   await browser.action.setTitle({ title: title(s) });
 }
 
-/** 툴바 버튼: 아이콘으로 현재 조회 방식을 보여 주고, 누르면 방식을 전환한다 */
+async function toggleMode() {
+  const s = await loadSettings();
+  await saveSettings({ ...s, wordSelectMode: s.wordSelectMode === 1 ? 0 : 1 });
+}
+
+/** 툴바 버튼과 단축키: 아이콘으로 현재 조회 방식을 보여 주고, 누르거나 단축키를 입력하면 방식을 전환한다 */
 export function setupModeButton() {
-  browser.action.onClicked.addListener(async () => {
-    const s = await loadSettings();
-    await saveSettings({ ...s, wordSelectMode: s.wordSelectMode === 1 ? 0 : 1 });
+  browser.action.onClicked.addListener(toggleMode);
+  browser.commands.onCommand.addListener((command) => {
+    if (command === 'toggle-mode') void toggleMode();
   });
   // setIcon은 브라우저를 다시 켜면 사라지므로 background가 시작할 때마다 다시 적용한다
   void loadSettings().then(render);
