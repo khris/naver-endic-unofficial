@@ -2,10 +2,15 @@ import { SpeechBubble } from '@/components/speech-bubble';
 import { DICT_WIDTH, isDictToParent, type ParentToDict } from '@/utils/dict-protocol';
 import { computeBubblePosition } from '@/utils/bubble-position';
 import { MATCHES } from '@/utils/matches';
+import { loadSettings, matchesModifier, watchSettings } from '@/utils/settings';
+import { wordAtPoint } from '@/utils/word-at-point';
 
 export default defineContentScript({
   matches: MATCHES,
   async main(ctx) {
+    let settings = await loadSettings();
+    ctx.onInvalidated(watchSettings((s) => (settings = s)));
+
     const state: { anchor?: DOMRect; text?: string; ready: boolean; awaitingSize: boolean } = {
       ready: false,
       awaitingSize: false,
@@ -110,6 +115,13 @@ export default defineContentScript({
     ctx.addEventListener(document, 'mouseup', (event) => {
       // 말풍선 안에서의 클릭은 무시한다
       if (event.composedPath().includes(ui.shadowHost)) return;
+      if (settings.wordSelectMode === 1) {
+        // 보조키를 누른 채 왼쪽 클릭한 위치의 단어를 조회한다
+        if (event.button !== 0 || !matchesModifier(settings, event)) return;
+        const word = wordAtPoint(event.clientX, event.clientY);
+        if (word) show(word.rect, word.text);
+        return;
+      }
       // 선택이 mouseup 직후에 확정되므로 다음 틱에 읽는다
       setTimeout(() => {
         const selection = window.getSelection();
