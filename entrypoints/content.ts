@@ -38,6 +38,22 @@ export default defineContentScript({
     });
     ui.mount();
 
+    // z-index는 이미 최댓값이라 더 올릴 수 없다. 모달 dialog나 전체 화면 요소는 z-index와
+    // 무관하게 top layer에 올라가므로, 말풍선도 popover로 top layer에 올려 그보다 위에 둔다.
+    // 이후 top layer에 들어오는 요소가 위로 오므로, 선택할 때마다 다시 올린다.
+    const host = ui.shadowHost;
+    host.popover = 'manual';
+    // popover의 UA 기본 스타일(배경, 테두리, 여백, 가운데 정렬)을 지운다
+    host.style.cssText += ';background:transparent;border:0;padding:0;margin:0;inset:auto;color:inherit';
+    function raise() {
+      try {
+        if (host.matches(':popover-open')) host.hidePopover();
+        host.showPopover();
+      } catch {
+        // popover를 지원하지 않으면 z-index만으로 둔다
+      }
+    }
+
     function post(message: ParentToDict) {
       iframe.contentWindow?.postMessage(message, dictOrigin);
     }
@@ -66,6 +82,7 @@ export default defineContentScript({
       state.text = text;
       state.awaitingSize = true;
       wrapper.style.visibility = 'hidden';
+      raise();
       if (state.ready) post({ type: 'dict:lookup', text });
     }
 
