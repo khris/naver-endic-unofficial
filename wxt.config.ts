@@ -12,8 +12,8 @@ export default defineConfig({
   manifest: () => ({
     // content script가 iframe으로 띄우는 사전 페이지
     web_accessible_resources: [{ resources: ['dict.html'], matches: MATCHES }],
-    // 네이버 사전 API 호출과, 그 요청의 Origin/Referer 헤더 보정
-    permissions: ['declarativeNetRequest'],
+    // 네이버 사전 API 호출과 그 요청의 Origin/Referer 헤더 보정, 설정 저장
+    permissions: ['declarativeNetRequest', 'storage'],
     host_permissions: ['https://en.dict.naver.com/*'],
     // 기존에 배포된 Firefox 확장을 이어가기 위한 add-on ID. 변경하지 말 것.
     browser_specific_settings: {
