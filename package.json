@@ -1,8 +1,8 @@
 {
-  "name": "wxt-starter",
-  "description": "manifest.json description",
+  "name": "naver-endic-unofficial",
+  "description": "찾고싶은 영어 단어를 선택하면 네이버 사전 팝업을 띄워줍니다.",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",
