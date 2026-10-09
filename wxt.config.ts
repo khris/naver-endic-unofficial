@@ -19,6 +19,10 @@ export default defineConfig({
     browser_specific_settings: {
       gecko: {
         id: 'jid0-4NyOrh90OO8ezy2B2j9O4zgrQdk@jetpack',
+        // 선택한 텍스트가 사전 조회를 위해 네이버로 전송된다
+        data_collection_permissions: {
+          required: ['websiteContent'],
+        },
       },
     },
   }),
