@@ -31,6 +31,24 @@ export function watchSettings(callback: (settings: Settings) => void) {
   return settingsItem.watch((value) => callback({ ...defaultSettings, ...value }));
 }
 
+/**
+ * 1.x 확장은 설정을 `storage.local`의 `prefs`에 저장했다. 새 설정이 아직 없으면 그 값을 가져온다.
+ * 되돌릴 수 있게 옛 값은 지우지 않는다.
+ */
+export async function migrateLegacyPrefs() {
+  if (Object.keys(await settingsItem.getValue()).length > 0) return;
+  const legacy = await storage.getItem<Record<string, unknown>>('local:prefs');
+  if (!legacy) return;
+  // 옛 옵션 페이지는 폼 값을 그대로 저장해서 wordSelectMode가 문자열("0", "1")일 수 있다
+  const flag = (value: unknown) => value === true || value === 'true';
+  await settingsItem.setValue({
+    wordSelectMode: Number(legacy.wordSelectMode) === 0 ? 0 : 1,
+    useCtrl: flag(legacy.useCtrl),
+    useAlt: flag(legacy.useAlt),
+    useMeta: flag(legacy.useMeta),
+  });
+}
+
 /** 클릭 시 눌린 보조키가 설정에서 켠 보조키인지 */
 export function matchesModifier(settings: Settings, event: MouseEvent) {
   return (
