@@ -10,6 +10,8 @@ export default defineConfig({
     firefoxPref: { 'network.lna.blocking': false },
   },
   manifest: () => ({
+    // 툴바 버튼. 아이콘과 제목은 background가 조회 방식에 맞춰 바꾼다
+    action: { default_icon: 'mode/std.png', default_title: '조회 방식 전환' },
     // content script가 iframe으로 띄우는 사전 페이지
     web_accessible_resources: [{ resources: ['dict.html'], matches: MATCHES }],
     // 네이버 사전 API 호출과 그 요청의 Origin/Referer 헤더 보정, 설정 저장
