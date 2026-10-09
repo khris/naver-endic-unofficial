@@ -1,0 +1,18 @@
+# 문서(docs/)가 Jekyll로 릴리스 목록을 읽어 렌더링하므로, 릴리스가 바뀔 때 Pages를 다시 빌드한다.
+name: Rebuild Pages on release
+
+on:
+  release:
+    types: [published, edited, deleted]
+  workflow_dispatch:
+
+permissions:
+  pages: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+        env:
+          GH_TOKEN: ${{ github.token }}
