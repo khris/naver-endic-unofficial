@@ -1,0 +1,7 @@
+{% assign item = include.item %}
+{% capture title_elem %}{{ include.title_elem | default: "h2" }}{% endcapture %}
+<div>
+    <{{ title_elem }}>{{ item.tag_name }}{% if item.name and item.name != "" and item.name != item.tag_name %} - {{ item.name }}{% endif %} <a href="{{ item.html_url }}">:octocat:</a></{{ title_elem }}>
+    <p>{{ item.published_at | date_to_long_string }}</p>
+    {{ item.body | markdownify }}
+</div>
